@@ -7,28 +7,27 @@
 using std::set;
 using std::vector;
 
-
-bool solve(vector<vector<int>>& board) 
+bool solve(vector<vector<int>> &board)
 {
-  int count = 0;
-  for (int i = 0; i < LEN; ++i) {
-    for (int j = 0; j < LEN; ++j) {
-      if (board[i][j] == 0) {
+  for (int i = 0; i < LEN; ++i)
+  {
+    for (int j = 0; j < LEN; ++j)
+    {
+      if (board[i][j] == 0)
+      {
+        for (int l = 1; l <= LEN; ++l)
         {
-          for (int l = 1; l <= LEN; ++l) {
-            if (isPossible(board, i, j, l)) {
-              board[i][j] = l;
-              if (solve(board)) {
-                return true;
-              } else {
-                board [i][j] = 0; 
-              }
-            }  
+          if (isPossible(board, i, j, l))
+          {
+            board[i][j] = l;
+            if (solve(board))
+              return true;
+            board[i][j] = 0;
           }
-          return false;
         }
+        return false;
       }
-    } 
+    }
   }
   return true;
 }
