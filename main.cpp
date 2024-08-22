@@ -1,9 +1,6 @@
 #include "constants.h"
-#include "is_possible.h"
-#include "game_end.h"
-#include "erase.h"
-#include "update_board.h"
-#include "solve.h"
+#include "user_move.h"
+#include "game_board.h"
 
 #include <iostream>
 #include <vector>
@@ -13,31 +10,15 @@ using std::cout;
 using std::endl;
 using std::vector;
 
-void printBoard(const vector<vector<int>>& board) 
-{
-  for (int row = 0; row < LEN; ++row) {
-    for (int col = 0; col < LEN; ++col) {
-      cout << board[row][col] << " ";
-      if ((col + 1) % 3 == 0 && col < LEN - 1) {
-        cout << "| ";
-      } 
-    }
-    cout << endl;
-    if ((row + 1) % 3 == 0 && row < LEN - 1) {
-      cout << "------+-------+------" << endl;
-    }
-  }
-  cout << endl;
-}
-
 int main() {
   int emptyCell = 0;
   int enterOrDel;
   int uInputRow, uInputCol, uInputVal;
   vector<vector<int>> sudokuBoard(LEN, vector<int>(LEN, emptyCell));
+  GameBoard game(9,9,0);
 
   cout << "Sudoku Grid:" << endl;
-  printBoard(sudokuBoard);
+  game.printBoard();
   
   while (true) {
     do {
@@ -54,10 +35,11 @@ int main() {
         if (uInputRow >= 1 && uInputRow <= LEN && uInputCol >= 1 && uInputCol <= LEN && uInputVal >= 1 && uInputVal <= LEN) {
           uInputRow -= 1;
           uInputCol -= 1;
-          if (sudokuBoard[uInputRow][uInputCol] != 0) {
+          if (game.isCellOccupied(uInputRow, uInputCol)) {
             cout << "Cell is already occupied. Please choose an empty cell.\n" << endl;
-          } else if (isPossible(sudokuBoard, uInputRow, uInputCol, uInputVal)) {
-            updateBoard(sudokuBoard, uInputRow, uInputCol, uInputVal);
+          } else if (game.isPossible(uInputRow, uInputCol, uInputVal)) {
+            game.updateCell();
+            game.printBoard();
           } else {
             cout << "Invalid move! This value conflicts with existing numbers.\n" << endl;
           }
@@ -71,17 +53,17 @@ int main() {
       if (uInputRow >= 1 && uInputRow <= LEN && uInputCol >= 1 && uInputCol <= LEN) {
         uInputRow -= 1;
         uInputCol -= 1;
-        eraseCell(sudokuBoard, uInputRow, uInputCol);
+        game.deleteCell(uInputRow, uInputCol);
       } else {
         cout << "Invalid input! Row and column must be between 1 and 9.\n" << endl;
       }
     } else {
-      solve(sudokuBoard);
+      game.autoSolve();
     }
     
-    printBoard(sudokuBoard);
+    game.printBoard();
     
-    if (gameEnd(sudokuBoard)) {
+    if (game.gameEnd()) {
       cout << "Well done! You have completed the Sudoku!" << endl;
       break;
     }
