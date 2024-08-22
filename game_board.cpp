@@ -34,6 +34,7 @@ bool GameBoard::isPossible(int row, int col, int val)
   GameBoard::row = row;
   GameBoard::col = col;
   GameBoard::val = val;
+  GameBoard::updateCell();
   return true;
 }
 
