@@ -9,12 +9,12 @@ using std::cout;
 using std::endl;
 using std::vector;
 
-bool GameBoard::isCellOccupied(int row, int col) 
+bool GameBoard::isCellOccupied(int row, int col) const
 {
   return board[row][col] != 0;
 }
 
-bool GameBoard::isPossible(int row, int col, int val)
+bool GameBoard::isPossible(int row, int col, int val, History& userHistory, UserMoves& moves)
 {
   for (int i = 0; i <= LEN-1; ++i) {
     if (board[row][i] == val) return false;
@@ -34,24 +34,36 @@ bool GameBoard::isPossible(int row, int col, int val)
   GameBoard::row = row;
   GameBoard::col = col;
   GameBoard::val = val;
-  GameBoard::updateCell();
+  GameBoard::updateCell(userHistory, moves);
   return true;
 }
 
-void GameBoard::updateCell() // add userHistory
+void GameBoard::updateCell(History& userHistory, UserMoves& moves) // add userHistory
 {
+  moves.row = row;
+  moves.col = col;
+  moves.previousValue = board[row][col];
+  moves.newValue = val;
   board[row][col] = val;
+
+  userHistory.moves.push_back(moves);
+  
+  cout << "User move history..." << endl;
+  cout << endl;
+  for(UserMoves& move : userHistory.moves) {
+    cout << move << endl;
+  }
 }
   
-void GameBoard::deleteCell(int row, int col) 
+void GameBoard::deleteCell(int row, int col, History& userHistory, UserMoves& moves)
 {
   GameBoard::row = row;
   GameBoard::col = col;
   GameBoard::val = 0;
-  GameBoard::updateCell();
+  GameBoard::updateCell(userHistory, moves);
 }
 
-bool GameBoard::autoSolve()
+bool GameBoard::autoSolve(History& userHistory, UserMoves& moves)
 {
   for (int i = 0; i < LEN; ++i)
   {
@@ -61,10 +73,10 @@ bool GameBoard::autoSolve()
       {
         for (int l = 1; l <= LEN; ++l)
         {
-          if (GameBoard::isPossible(i, j, l))
+          if (GameBoard::isPossible(i, j, l, userHistory, moves))
           {
             board[i][j] = l;
-            if (autoSolve())
+            if (autoSolve(userHistory, moves))
               return true;
             board[i][j] = 0;
           }
@@ -76,8 +88,9 @@ bool GameBoard::autoSolve()
   return true;
 }
 
-void GameBoard::printBoard()
+void GameBoard::printBoard() const
 {
+  cout << "\n";
   for (int row = 0; row < LEN; ++row) {
     for (int col = 0; col < LEN; ++col) {
       cout << board[row][col] << " ";
@@ -93,7 +106,7 @@ void GameBoard::printBoard()
   cout << endl;
 }
 
-bool GameBoard::gameEnd()
+bool GameBoard::gameEnd() const
 {
   for (int i = 0; i < LEN; ++i) {
     for (int j = 0; j < LEN; ++j) {

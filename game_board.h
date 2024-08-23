@@ -17,13 +17,13 @@ public:
   GameBoard(int r, int c, int v) 
     : row(r), col(c), val(v), board(r, std::vector<int>(c, v)) {}
 
-  bool isCellOccupied(int, int);
-  bool isPossible(int, int, int);
-  void updateCell();
-  void deleteCell(int, int);
-  bool autoSolve();
-  void printBoard(); 
-  bool gameEnd();
+  bool isCellOccupied(int, int) const;
+  bool isPossible(int, int, int, History&, UserMoves&);
+  void updateCell(History&, UserMoves&);
+  void deleteCell(int, int, History&, UserMoves&);
+  bool autoSolve(History&, UserMoves &);
+  void printBoard() const; 
+  bool gameEnd() const;
 };
 
 #endif // BOARD_H

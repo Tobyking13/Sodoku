@@ -11,11 +11,11 @@ private:
 
 public:
   int mode;
-  void init(GameBoard&);
+  void init(const GameBoard&);
   void gameStart();
-  void enterCell(GameBoard&);
-  void deleteCell(GameBoard&);
-  bool gameComplete(GameBoard&);
+  void enterCell(GameBoard&, History&, UserMoves&);
+  void deleteCell(GameBoard&, History&, UserMoves&);
+  bool gameComplete(const GameBoard&);
 };
 
 #endif // CLI_H

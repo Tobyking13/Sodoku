@@ -7,7 +7,7 @@ using std::cin;
 using std::cout;
 using std::endl;
 
-void CLI::init(GameBoard& game)
+void CLI::init(const GameBoard& game)
 {
   cout << "Sudoku Grid:" << endl;
   game.printBoard();
@@ -25,7 +25,7 @@ void CLI::gameStart()
   mode = enterOrDel;
 }
 
-void CLI::enterCell(GameBoard& game)
+void CLI::enterCell(GameBoard& game, History& userHistory, UserMoves& moves)
 {
   cout << "Please enter row, column, and value (1-9 each):" << endl;
   cin >> row >> col >> val;
@@ -34,8 +34,8 @@ void CLI::enterCell(GameBoard& game)
     col -= 1;
     if (game.isCellOccupied(row, col)) {
       cout << "Cell is already occupied. Please choose an empty cell.\n" << endl;
-    } else if (game.isPossible(row, col, val)) {
-      game.printBoard();
+    } else if (game.isPossible(row, col, val, userHistory, moves)) {
+      cout << "\nUpdated board..." << endl;
     } else {
       cout << "Invalid move! This value conflicts with existing numbers.\n" << endl;
     }
@@ -44,20 +44,20 @@ void CLI::enterCell(GameBoard& game)
   }
 }
 
-void CLI::deleteCell(GameBoard& game) 
+void CLI::deleteCell(GameBoard& game, History& userHistory, UserMoves& moves) 
 {
   cout << "Please enter the row and column of the cell to delete (1-9 each):" << endl;
   cin >> row >> col;
   if (row >= 1 && row <= LEN && col >= 1 && col <= LEN) {
     row -= 1;
     col -= 1;
-    game.deleteCell(row, col);
+    game.deleteCell(row, col, userHistory, moves);
   } else {
     cout << "Invalid input! Row and column must be between 1 and 9.\n" << endl;
   }
 }
 
-bool CLI::gameComplete(GameBoard& game) 
+bool CLI::gameComplete(const GameBoard& game) 
 {
   if (game.gameEnd()) {
     cout << "Well done! You have completed the Sudoku!" << endl;
